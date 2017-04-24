@@ -1,0 +1,65 @@
+eduroam-int-dhcp-97-206-157:~ amelianewton$ cd Documents
+eduroam-int-dhcp-97-206-157:Documents amelianewton$ cd UCL\ Year\ 3/
+eduroam-int-dhcp-97-206-157:UCL Year 3 amelianewton$ cd BIOC3301
+eduroam-int-dhcp-97-206-157:BIOC3301 amelianewton$ git clone https://github.com/Cistron/bioc3301_data.git reportresults
+Cloning into 'reportresults'...
+remote: Counting objects: 45, done.
+remote: Compressing objects: 100% (34/34), done.
+remote: Total 45 (delta 10), reused 44 (delta 9), pack-reused 0
+Unpacking objects: 100% (45/45), done.
+Checking connectivity... done.
+eduroam-int-dhcp-97-206-157:BIOC3301 amelianewton$ cd reportresults
+eduroam-int-dhcp-97-206-157:reportresults amelianewton$ ls
+2016				2017_stdout
+2016_cr_join_no_golay.sh	README.md
+2016_stdout			legion_qiime_install.sh
+2017				merge_otu_tables.sh
+2017_cr_nojoin_no_golay.sh	merged_otu_table.biom
+eduroam-int-dhcp-97-206-157:reportresults amelianewton$ cat README.md
+Both datasets (this year's and last year's) were uploaded to UCL high performance compute cluster Legion and processed according to the bash scripts `2016_cr_join_no_golay.sh` and `2017_cr_nojoin_no_golay.sh`. The standard output from these scripts is saved in `2016_stdout` and `2017_stdout`, respectively.
+
+The files contain several lines of codes starting with \#, which are instructions for the HPC job queue. Such as how long the job will run on how many cores, how much RAM and storage is required.
+
+For 2016's data both reads were joined, prior to de-multiplexing. As 2017's second read data was of lower quality, joining was skipped and only read1 was processed.
+
+After picking OTUs with the Greengenes reference the BIOM-formated tables were merged with the command in `merge_otu_tables.sh`.
+
+Any of the phylogentic trees found in `2016/otus` or `2017/otus` can be used for further analysis (e.g. the `core_diversity_analyses.py` script), as this is the Greengenes reference tree.
+eduroam-int-dhcp-97-206-157:reportresults amelianewton$ source activate qiime1
+(qiime1) eduroam-int-dhcp-97-206-157:reportresults amelianewton$ biom summarize-table -i merged_otu_table.biom
+Num samples: 12
+Num observations: 15504
+Total count: 10453711
+Table density (fraction of non-zero values): 0.443
+
+Counts/sample summary:
+ Min: 371590.0
+ Max: 1427140.0
+ Median: 849510.000
+ Mean: 871142.583
+ Std. dev.: 261282.144
+ Sample Metadata Categories: None provided
+ Observation Metadata Categories: taxonomy
+
+Counts/sample detail:
+15.16.4: 371590.0
+16.17.5: 597583.0
+16.17.3: 693596.0
+16.17.7: 724145.0
+15.16.3: 785867.0
+16.17.1: 818625.0
+16.17.4: 880395.0
+15.16.2: 966382.0
+16.17.6: 1017801.0
+16.17.8: 1076565.0
+16.17.2: 1094022.0
+15.16.1: 1427140.0
+(qiime1) eduroam-int-dhcp-97-206-157:reportresults amelianewton$ cd New
+(qiime1) eduroam-int-dhcp-97-206-157:New amelianewton$ core_diversity_analyses.py --recover_from_failure -o cdout/ -i merged_otu_table.biom -m map.tsv_corrected.txt -t 97_otus.tree -e 371590 --recover_from_failure
+/Users/amelianewton/miniconda2/envs/qiime1/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.00138553148439 and the largest is 0.229122232224.
+  RuntimeWarning
+/Users/amelianewton/miniconda2/envs/qiime1/lib/python2.7/site-packages/matplotlib/collections.py:590: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  if self._edgecolors == str('face'):
+/Users/amelianewton/miniconda2/envs/qiime1/lib/python2.7/site-packages/matplotlib/collections.py:590: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  if self._edgecolors == str('face'):
+(qiime1) eduroam-int-dhcp-97-206-157:New amelianewton$ open cdout/index.html
